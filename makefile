@@ -3,7 +3,7 @@ postgres:
 createdb:
 	sudo docker exec -it postgres12 createdb --username=tesfay2f --owner=tesfay2f simple_bank
 dropdb:
-	sudo docker exec -it postgres12 dropdb --username=tesfay2f simple_bank
+	sudo docker exec -it --network bank_netwok postgres12 dropdb --username=tesfay2f simple_bank
 migrateup:
 	migrate -path simplebank/db/migrations -database 'postgresql://tesfay2f:tsionawi@2121@localhost:5432/simple_bank?sslmode=disable' -verbose up
 migrateup1:
