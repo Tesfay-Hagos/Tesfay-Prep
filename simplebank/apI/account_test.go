@@ -113,6 +113,10 @@ func randomAccount() db.Account {
 	}
 }
 
+func TestCreateAccount(t *testing.T) {
+
+}
+
 // check the account in the body and initial account created for test
 func requireBodyMatchAccount(t *testing.T, body *bytes.Buffer, account db.Account) {
 	data, err := ioutil.ReadAll(body)

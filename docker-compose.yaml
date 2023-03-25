@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=tesfay2f
+      - POSTGRES_PASSWORD=tsionawi@2121
+      - POSTGRES_DB=simple_bank
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_SOURCE = "postgresql://tesfay2f:tsionawi@2121@postgres12:5432/simple_bank?sslmode=disable"name=value"
+
+
+          
+          
