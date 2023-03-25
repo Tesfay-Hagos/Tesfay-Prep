@@ -2,15 +2,16 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 	db "tesfayprep/simplebank/db/sqlc"
+	"tesfayprep/token"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
 
 type createAccountRequest struct {
-	Owner    string `json:"owner" binding:"required"`
 	Currency string `json:"currency" binding:"required,currency"`
 }
 
@@ -20,9 +21,9 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
+	authpayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreateaccountParams{
-		Owner:    req.Owner,
+		Owner:    authpayload.Username,
 		Currence: req.Currency,
 		Balance:  0,
 	}
@@ -68,7 +69,12 @@ func (server *Server) getAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-
+	authpayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if account.Owner != authpayload.Username {
+		err := errors.New("unauthorized owner")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
 	//account := db.Account{}
 	ctx.JSON(http.StatusOK, account)
 }
@@ -79,13 +85,15 @@ type listAccountRequest struct {
 }
 
 func (server *Server) listAccount(ctx *gin.Context) {
+
 	var req listAccountRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-
+	authpayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.ListAccountsParams{
+		Owner:  authpayload.Username,
 		Limit:  req.PageSize,
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
