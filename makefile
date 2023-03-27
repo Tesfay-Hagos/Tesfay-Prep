@@ -19,11 +19,11 @@ sqlc:
 getpid:
 	sudo lsof -i :5432
 test:
-	go test -v ./...
+	go test -v  ./...
 startdocker:
 	sudo docker start postgres12
 server:
-	go run main.go
+	go run cmd/main.go
 mock:
 	mockgen -package mockdb -destination simplebank/db/mock/store.go tesfayprep/simplebank/db/sqlc Store
 
